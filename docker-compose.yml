@@ -1,0 +1,17 @@
+---
+version: "3.8"
+services:
+  test:
+    build:
+      target: test
+      context: .
+
+  cli:
+    image: ${COMMIT_IMAGE:-local/ddos_deny_list:cli}
+    build:
+      target: cli
+      context: .
+    volumes:
+      - ./data/:/usr/src/app/data/
+    command: denylist.py $RD_OPTION_TOKEN
+    tty: true

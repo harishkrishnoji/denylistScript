@@ -1,0 +1,49 @@
+{
+    "data": [
+        {
+            "id": "b09c423f-e55e-4c61-ae1c-46c1fcd390e0",
+            "type": "ip_objects",
+            "attributes": {
+                "ip": "1.1.1.1",
+                "mask": "32",
+                "duration": 0,
+                "expires_at": null,
+                "list_target": "proxy"
+            },
+            "links": {
+                "self": "https://portal.f5silverline.com/api/v1/ip_lists/denylist/ip_objects/b09c423f-e55e-4c61-ae1c-46c1fcd390e0?list_target=proxy"
+            },
+            "meta": {
+                "note": "",
+                "tags": [],
+                "created_at": "2021-01-20T00:28:30.522Z",
+                "updated_at": "2021-01-20T00:28:30.522Z"
+            }
+        },
+        {
+            "id": "1-1-1-1_32",
+            "type": "ip_objects",
+            "attributes": {
+                "ip": "1.1.1.1",
+                "mask": "32",
+                "duration": null,
+                "expires_at": null,
+                "list_target": "routed"
+            },
+            "links": {
+                "self": "https://portal.f5silverline.com/api/v1/ip_lists/denylist/ip_objects/1-1-1-1_32?list_target=routed"
+            },
+            "meta": {
+                "note": "",
+                "tags": [],
+                "created_at": null,
+                "updated_at": null
+            }
+        }
+    ],
+    "links": {
+        "links": {
+            "self": "https://portal.f5silverline.com/api/v1/ip_lists/denylist/ip_objects"
+        }
+    }
+}
