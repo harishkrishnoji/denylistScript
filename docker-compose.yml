@@ -15,4 +15,3 @@ services:
       - ./data1/:/usr/src/app/data/
     command: denylist.py $RD_OPTION_TOKEN
     tty: true
-https://git-enterprise-jc.onefiserv.net/fts-san/sane/dev-rundeck/ddos_denylist_script.git
