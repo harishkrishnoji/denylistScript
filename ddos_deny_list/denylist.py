@@ -6,8 +6,8 @@ from SilverLine Denylist.
 
 import requests
 import sys
-import json
 import time
+import yaml
 
 requests.packages.urllib3.disable_warnings()
 
@@ -31,7 +31,7 @@ def get_denylist(url, token, verify_ssl=False):
     return resp.json()
 
 
-def add_ip2denylist(url, token, addr, mask, notes="script executed", verify_ssl=False):
+def add_ip2denylist(url, token, addr, mask, verify_ssl=False):
     """Add new IPv4 address to Tenant specific denylist.
 
     Args:
@@ -39,7 +39,6 @@ def add_ip2denylist(url, token, addr, mask, notes="script executed", verify_ssl=
         token (str): SilverLine Tenant specific Token
         addr (str): IPv4 Address
         mask (str): IPv4 network mask
-        notes (str, optional): Defaults to "script executed".
 
     Returns:
         int : Requests response status_code
@@ -49,11 +48,10 @@ def add_ip2denylist(url, token, addr, mask, notes="script executed", verify_ssl=
         "X-Authorization-Token": token,
         "cache-control": "no-cache",
     }
-    payload = {"data": {"type": "ip_objects", "attributes": {"duration": 0}, "meta": {"note": None}}}
+    payload = {"data": {"type": "ip_objects", "attributes": {"duration": 0}}}
     payload["data"]["id"] = addr + "_" + mask
     payload["data"]["attributes"]["ip"] = addr
     payload["data"]["attributes"]["mask"] = mask
-    payload["data"]["meta"]["note"] = notes
 
     resp = requests.post(url=f"{url}ip_lists/denylist/ip_objects", verify=verify_ssl, headers=headers, json=payload)
     return resp.status_code
@@ -108,27 +106,23 @@ if __name__ == "__main__":
     token = str(sys.argv[1])
 
     # Opening JSON file
-    f = open("data/deny_list.json",)
+    f = open("data/deny_list.yml",)
 
     # returns JSON object as  a dictionary
-    intend_data = json.load(f)
+    intend_data = yaml.safe_load(f)
     current_data = view_aciton(url, token)
 
     # Iterating through the json list to Add new Address or to update comments
-    for idata in intend_data:
+    for idata in intend_data["deny_list"]:
         add1 = True
         for cdata in current_data:
             if (idata["addr"].split("/")[0] == cdata["ip"]) and (idata["addr"].split("/")[1] == cdata["mask"]):
-                if idata["comments"] == cdata["note"]:
-                    add1 = False
-                else:
-                    add1 = False
-                    print(f"\tNeed to update comments : {cdata['id']}")
+                add1 = False
+
         if add1:
             addr = idata["addr"].split("/")[0]
             mask = idata["addr"].split("/")[1]
-            comm = idata["comments"]
-            resp = add_ip2denylist(url, token, addr, mask, notes=comm, verify_ssl=False)
+            resp = add_ip2denylist(url, token, addr, mask, verify_ssl=False)
             if resp == 201:
                 print(f"\tSuccessfully added {idata} to the Deny-list")
             else:
@@ -138,7 +132,7 @@ if __name__ == "__main__":
     # Iterating through the json list to Delete Address
     for cdata in current_data:
         del1 = True
-        for idata in intend_data:
+        for idata in intend_data["deny_list"]:
             if (cdata["ip"] == idata["addr"].split("/")[0]) and (cdata["mask"] == idata["addr"].split("/")[1]):
                 del1 = False
         if del1:
