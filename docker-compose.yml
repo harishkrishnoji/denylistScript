@@ -12,6 +12,6 @@ services:
       target: cli
       context: .
     volumes:
-      - ./data1/:/usr/src/app/data/
+      - ./data/:/usr/src/app/data/
     command: denylist.py $RD_OPTION_TOKEN
     tty: true

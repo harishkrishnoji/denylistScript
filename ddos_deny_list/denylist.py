@@ -106,7 +106,7 @@ if __name__ == "__main__":
     token = str(sys.argv[1])
 
     # Opening JSON file
-    f = open("/usr/src/app/data/deny_list.yml")
+    f = open("data/deny_list.yml")
 
     # returns JSON object as  a dictionary
     intend_data = yaml.safe_load(f)
