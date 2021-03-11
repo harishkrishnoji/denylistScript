@@ -89,7 +89,7 @@ def view_aciton(url, token):
     for i in data["data"]:
         if "routed" in i["attributes"]["list_target"]:
             deny_list.append(
-                #{"id": i["id"], "ip": i["attributes"]["ip"], "mask": i["attributes"]["mask"], "note": i["meta"]["note"]}
+                # {"id": i["id"], "ip": i["attributes"]["ip"], "mask": i["attributes"]["mask"], "note": i["meta"]["note"]}
                 {"id": i["id"], "ip": i["attributes"]["ip"], "mask": i["attributes"]["mask"]}
             )
     return deny_list
