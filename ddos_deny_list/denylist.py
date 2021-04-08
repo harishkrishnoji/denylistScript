@@ -164,7 +164,7 @@ if __name__ == "__main__":
 
     d = {
         "From": "sane_automation@fiserv.com",
-        "to": "paul.thomas@Fiserv.com, Andy.Clark@Fiserv.com, william.dolbow@Fiserv.com"
+        "to": "paul.thomas@Fiserv.com, Andy.Clark@Fiserv.com, william.dolbow@Fiserv.com",
         "cc": "harish.krishnoji@Fiserv.com",
         "body": msg_data,
     }
