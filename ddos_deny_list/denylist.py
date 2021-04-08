@@ -114,7 +114,7 @@ if __name__ == "__main__":
 
     url = "https://portal.f5silverline.com/api/v1/"
     tenant_lst = []
-    tenant_lst.append({"name": "Dev_test", "token": str(sys.argv[1])})
+    tenant_lst.append({"name": "Fiserv-Development (firstdata7)", "token": str(sys.argv[1])})
     # token = str(sys.argv[1])
 
     # Opening JSON file
@@ -124,6 +124,8 @@ if __name__ == "__main__":
     intend_data = yaml.safe_load(f)
 
     msg_data = []
+    msg_data.append("DenyList update to 'Routed' mode ONLY")
+    msg_data.append("")
     # Iterating through the json list to Add new Address or to update comments
     for tenant in tenant_lst:
         current_data = view_aciton(url, tenant["token"])
@@ -157,22 +159,13 @@ if __name__ == "__main__":
                     msg_data.append(f"{tenant['name']} : ERROR - Couldn't remove {cdata} from Deny-list")
                     msg_data.append(f"{tenant['name']} : Response Code {resp}")
 
-    # Wait for 60 sec to pull modified data
-    # time.sleep(60)
-    # for tenant in tenant_lst:
-    #    data = view_aciton(url, tenant["token"])
-    #    msg_data.append(f"{10*'='}Current Denylist{10*'='}")
-    #    msg_data.append("\n\tCurrent Denylist")
-    #    for lst in data:
-    #        msg_data.append(f"\t{lst}")
-
     for pdata in msg_data:
-        print("\tpdata")
+        print(f"\t{pdata}")
 
     d = {
         "From": "sane_automation@fiserv.com",
-        # "to": "paul.thomas@Fiserv.com, Andy.Clark@Fiserv.com, william.dolbow@Fiserv.com"
-        "to": "harish.krishnoji@Fiserv.com",
+        "to": "paul.thomas@Fiserv.com, Andy.Clark@Fiserv.com, william.dolbow@Fiserv.com"
+        "cc": "harish.krishnoji@Fiserv.com",
         "body": msg_data,
     }
     send_email(**d)
