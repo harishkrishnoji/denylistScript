@@ -6,8 +6,13 @@ from SilverLine Denylist.
 
 import requests
 import sys
-import time
+
+# import time
 import yaml
+from helper_fts.email import send_email
+
+# from helper_fts.splunk import splunk_log_event
+# from helper_fts.fts_sane import *
 
 requests.packages.urllib3.disable_warnings()
 
@@ -53,7 +58,9 @@ def add_ip2denylist(url, token, addr, mask, verify_ssl=False):
     payload["data"]["attributes"]["ip"] = addr
     payload["data"]["attributes"]["mask"] = mask
 
-    resp = requests.post(url=f"{url}ip_lists/denylist/ip_objects", verify=verify_ssl, headers=headers, json=payload)
+    resp = requests.post(
+        url=f"{url}ip_lists/denylist/ip_objects?list_target=routed", verify=verify_ssl, headers=headers, json=payload
+    )
     return resp.status_code
 
 
@@ -73,7 +80,9 @@ def delete_ipfromdenylist(url, token, id, verify_ssl=False):
         "X-Authorization-Token": token,
         "cache-control": "no-cache",
     }
-    resp = requests.delete(url=f"{url}ip_lists/denylist/ip_objects/" + id, verify=verify_ssl, headers=headers)
+    resp = requests.delete(
+        url=f"{url}ip_lists/denylist/ip_objects/{id}?list_target=routed", verify=verify_ssl, headers=headers
+    )
     return resp.status_code
 
 
@@ -104,52 +113,72 @@ if __name__ == "__main__":
     """
 
     url = "https://portal.f5silverline.com/api/v1/"
-    token = str(sys.argv[1])
+    tenant_lst = []
+    tenant_lst.append({"name": "Dev_test", "token": str(sys.argv[1])})
+    # token = str(sys.argv[1])
 
     # Opening JSON file
     f = open("data/deny_list.yml")
 
     # returns JSON object as  a dictionary
     intend_data = yaml.safe_load(f)
-    current_data = view_aciton(url, token)
 
+    msg_data = []
     # Iterating through the json list to Add new Address or to update comments
-    for idata in intend_data["deny_list"]:
-        add1 = True
-        for cdata in current_data:
-            if (idata["addr"].split("/")[0] == cdata["ip"]) and (idata["addr"].split("/")[1] == cdata["mask"]):
-                add1 = False
-
-        if add1:
-            addr = idata["addr"].split("/")[0]
-            mask = idata["addr"].split("/")[1]
-            resp = add_ip2denylist(url, token, addr, mask, verify_ssl=False)
-            if resp == 201:
-                print(f"\tSuccessfully added {idata} to the Deny-list")
-            else:
-                print(f"\tERROR : Couldn't added {idata} to the Deny-list")
-                print(f"\tResponse Code : {resp}")
-
-    # Iterating through the json list to Delete Address
-    for cdata in current_data:
-        del1 = True
+    for tenant in tenant_lst:
+        current_data = view_aciton(url, tenant["token"])
         for idata in intend_data["deny_list"]:
-            if (cdata["ip"] == idata["addr"].split("/")[0]) and (cdata["mask"] == idata["addr"].split("/")[1]):
-                del1 = False
-        if del1:
-            resp = delete_ipfromdenylist(url, token, cdata["id"], verify_ssl=False)
-            if resp == 200:
-                print(f"\tSuccessfully removed {cdata} from Deny-list")
-            else:
-                print(f"\tERROR : Couldn't remove {cdata} from Deny-list")
-                print(f"\tResponse Code : {resp}")
+            add1 = True
+            for cdata in current_data:
+                if (idata["addr"].split("/")[0] == cdata["ip"]) and (idata["addr"].split("/")[1] == cdata["mask"]):
+                    add1 = False
+
+            if add1:
+                addr = idata["addr"].split("/")[0]
+                mask = idata["addr"].split("/")[1]
+                resp = add_ip2denylist(url, tenant["token"], addr, mask, verify_ssl=False)
+                if resp == 201:
+                    msg_data.append(f"{tenant['name']} : Successfully added {idata} to the Deny-list")
+                else:
+                    msg_data.append(f"{tenant['name']} : ERROR - Couldn't added {idata} to the Deny-list")
+                    msg_data.append(f"{tenant['name']} : Response Code {resp}")
+
+        # Iterating through the json list to Delete Address
+        for cdata in current_data:
+            del1 = True
+            for idata in intend_data["deny_list"]:
+                if (cdata["ip"] == idata["addr"].split("/")[0]) and (cdata["mask"] == idata["addr"].split("/")[1]):
+                    del1 = False
+            if del1:
+                resp = delete_ipfromdenylist(url, tenant["token"], cdata["id"], verify_ssl=False)
+                if resp == 200:
+                    msg_data.append(f"{tenant['name']} : Successfully removed {cdata} from Deny-list")
+                else:
+                    msg_data.append(f"{tenant['name']} : ERROR - Couldn't remove {cdata} from Deny-list")
+                    msg_data.append(f"{tenant['name']} : Response Code {resp}")
 
     # Wait for 60 sec to pull modified data
-    time.sleep(60)
-    data = view_aciton(url, token)
-    print("\n\tCurrent Denylist")
-    for lst in data:
-        print(f"\t{lst}")
+    # time.sleep(60)
+    # for tenant in tenant_lst:
+    #    data = view_aciton(url, tenant["token"])
+    #    msg_data.append(f"{10*'='}Current Denylist{10*'='}")
+    #    msg_data.append("\n\tCurrent Denylist")
+    #    for lst in data:
+    #        msg_data.append(f"\t{lst}")
+
+    for pdata in msg_data:
+        print("\tpdata")
+
+    d = {
+        "From": "sane_automation@fiserv.com",
+        # "to": "paul.thomas@Fiserv.com, Andy.Clark@Fiserv.com, william.dolbow@Fiserv.com"
+        "to": "harish.krishnoji@Fiserv.com",
+        "body": msg_data,
+    }
+    send_email(**d)
+    # SPLUNK_VAR["token"] = f"Splunk {SPLUNK_TOKEN}"
+    # SPLUNK_VAR["data"] = msg_data
+    # splunk_log_event(**SPLUNK_VAR)
 
     # Closing file
     f.close()
