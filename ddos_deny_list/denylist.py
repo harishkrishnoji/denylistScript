@@ -6,13 +6,10 @@ from SilverLine Denylist.
 
 import requests
 import sys
-
-# import time
 import yaml
 from helper_fts.email import send_email
-
-# from helper_fts.splunk import splunk_log_event
-# from helper_fts.fts_sane import *
+from helper_fts.splunk import splunk_log_event
+from helper_fts.fts_sane import *
 
 requests.packages.urllib3.disable_warnings()
 
@@ -166,12 +163,13 @@ if __name__ == "__main__":
         "From": "sane_automation@fiserv.com",
         "to": "paul.thomas@Fiserv.com, Andy.Clark@Fiserv.com, william.dolbow@Fiserv.com",
         "cc": "harish.krishnoji@Fiserv.com",
+        "subject": "F5 SliverLine DenyList - Routed Mode",
         "body": msg_data,
     }
     send_email(**d)
-    # SPLUNK_VAR["token"] = f"Splunk {SPLUNK_TOKEN}"
-    # SPLUNK_VAR["data"] = msg_data
-    # splunk_log_event(**SPLUNK_VAR)
+    SPLUNK_VAR["token"] = f"Splunk {str(sys.argv[2])}"
+    SPLUNK_VAR["data"] = msg_data
+    splunk_log_event(**SPLUNK_VAR)
 
     # Closing file
     f.close()
