@@ -121,8 +121,6 @@ if __name__ == "__main__":
     intend_data = yaml.safe_load(f)
 
     msg_data = []
-    msg_data.append("DenyList update to 'Routed' mode ONLY")
-    msg_data.append("")
     # Iterating through the json list to Add new Address or to update comments
     for tenant in tenant_lst:
         current_data = view_aciton(url, tenant["token"])
@@ -137,9 +135,9 @@ if __name__ == "__main__":
                 mask = idata["addr"].split("/")[1]
                 resp = add_ip2denylist(url, tenant["token"], addr, mask, verify_ssl=False)
                 if resp == 201:
-                    msg_data.append(f"{tenant['name']} : Successfully added {idata} to the Deny-list")
+                    msg_data.append(f"{tenant['name']} : Successfully added {idata["addr"]}")
                 else:
-                    msg_data.append(f"{tenant['name']} : ERROR - Couldn't added {idata} to the Deny-list")
+                    msg_data.append(f"{tenant['name']} : ERROR - Couldn't added {idata["addr"]}")
                     msg_data.append(f"{tenant['name']} : Response Code {resp}")
 
         # Iterating through the json list to Delete Address
@@ -151,9 +149,9 @@ if __name__ == "__main__":
             if del1:
                 resp = delete_ipfromdenylist(url, tenant["token"], cdata["id"], verify_ssl=False)
                 if resp == 200:
-                    msg_data.append(f"{tenant['name']} : Successfully removed {cdata} from Deny-list")
+                    msg_data.append(f"{tenant['name']} : Successfully removed {cdata["ip"]}/{cdata["mask"]}")
                 else:
-                    msg_data.append(f"{tenant['name']} : ERROR - Couldn't remove {cdata} from Deny-list")
+                    msg_data.append(f"{tenant['name']} : ERROR - Couldn't remove {cdata["ip"]}/{cdata["mask"]}")
                     msg_data.append(f"{tenant['name']} : Response Code {resp}")
 
     for pdata in msg_data:
@@ -163,7 +161,7 @@ if __name__ == "__main__":
         "From": "sane_automation@fiserv.com",
         "to": "paul.thomas@Fiserv.com, Andy.Clark@Fiserv.com, william.dolbow@Fiserv.com",
         "cc": "harish.krishnoji@Fiserv.com",
-        "subject": "F5 SliverLine DenyList - Routed Mode",
+        "subject": "F5 SliverLine DenyList - Routed Mode ONLY",
         "body": msg_data,
     }
     send_email(**d)
