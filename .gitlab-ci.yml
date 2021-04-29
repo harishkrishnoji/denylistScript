@@ -7,8 +7,9 @@ stages:
 
 variables:
   RELEASE_IMAGE: ${CI_REGISTRY_IMAGE}:latest
-  COMMIT_IMAGE: ${CI_REGISTRY_IMAGE}:$CI_COMMIT_SHORT_SHA
-  COMPOSE_PROJECT_NAME: $CI_PROJECT_NAME_$CI_COMMIT_SHORT_SHA
+  COMMIT_IMAGE: ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}
+  # Unique image names for parallel builds
+  COMPOSE_PROJECT_NAME: ${CI_PROJECT_NAME}_${CI_PIPELINE_ID}
 
 # CI Pipeline stages in this file are pinned to a runner
 # with the tag of `FTS_LAB_CONCURRENT`.  If you are wanting to use the JC
