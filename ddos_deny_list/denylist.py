@@ -5,7 +5,7 @@ from SilverLine Denylist.
 """
 
 import requests
-import sys
+import os
 import yaml
 from helper_fts.email import send_email
 from helper_fts.splunk import splunk_log_event
@@ -111,7 +111,8 @@ if __name__ == "__main__":
 
     url = "https://portal.f5silverline.com/api/v1/"
     tenant_lst = []
-    tenant_lst.append({"name": "Fiserv-Development (firstdata7)", "token": str(sys.argv[1])})
+    # tenant_lst.append({"name": "Fiserv-Development (firstdata7)", "token": str(sys.argv[1])})
+    tenant_lst.append({"name": "Fiserv-Development (firstdata7)", "token": os.environ.get("RD_OPTION_TOKEN")})
     # token = str(sys.argv[1])
 
     # Opening JSON file
@@ -165,7 +166,8 @@ if __name__ == "__main__":
         "body": msg_data,
     }
     send_email(**d)
-    SPLUNK_VAR["token"] = f"Splunk {str(sys.argv[2])}"
+    # SPLUNK_VAR["token"] = f"Splunk {str(sys.argv[2])}"
+    SPLUNK_VAR["token"] = f"Splunk {os.environ.get('RD_OPTION_SPLUNKTOKEN')}"
     SPLUNK_VAR["data"] = msg_data
     splunk_log_event(**SPLUNK_VAR)
 

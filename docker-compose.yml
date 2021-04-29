@@ -11,15 +11,18 @@ services:
     build:
       target: cli
       context: .
+    environment:
+      RD_OPTION_TOKEN: $RD_OPTION_TOKEN
+      RD_OPTION_SPLUNKTOKEN: $RD_OPTION_SPLUNKTOKEN
     volumes:
       - inventory:/usr/src/app/data/:ro
-    command: denylist.py $RD_OPTION_TOKEN $RD_OPTION_SPLUNKTOKEN
+    command: denylist.py
     tty: true
   inventory_service:
     image: ${INVENTORY_IMAGE}
     volumes:
       # Requires 'VOLUME /usr/src/app/inventory' in inventory Dockerfile
       - inventory:/usr/src/app/inventory:ro
-  
+
 volumes:
   inventory:
