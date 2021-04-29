@@ -18,6 +18,8 @@ services:
       - inventory:/usr/src/app/data/:ro
     command: denylist.py
     tty: true
+    depends_on:
+      - inventory_service
   inventory_service:
     image: ${INVENTORY_IMAGE}
     volumes:
