@@ -13,6 +13,7 @@ services:
       context: .
     environment:
       RD_OPTION_TOKEN: $RD_OPTION_TOKEN
+      RD_OPTION_TOKEN_ALL: $RD_OPTION_TOKEN_ALL
       RD_OPTION_SPLUNKTOKEN: $RD_OPTION_SPLUNKTOKEN
     volumes:
       - inventory:/usr/src/app/data/:ro
