@@ -5,11 +5,12 @@ from SilverLine Denylist.
 """
 
 import requests
-import sys
+import os
 import yaml
-from helper_fts.email import send_email
-from helper_fts.splunk import splunk_log_event
-from helper_fts.fts_sane import *
+
+# from helper_fts.email import send_email
+# from helper_fts.splunk import splunk_log_event
+# from helper_fts.fts_sane import *
 
 requests.packages.urllib3.disable_warnings()
 
@@ -33,6 +34,7 @@ def get_denylist(url, token, verify_ssl=False):
     return resp.json()
 
 
+'''
 def add_ip2denylist(url, token, addr, mask, verify_ssl=False):
     """Add new IPv4 address to Tenant specific denylist.
 
@@ -81,6 +83,7 @@ def delete_ipfromdenylist(url, token, id, verify_ssl=False):
         url=f"{url}ip_lists/denylist/ip_objects/{id}?list_target=routed", verify=verify_ssl, headers=headers
     )
     return resp.status_code
+'''
 
 
 def view_aciton(url, token):
@@ -111,7 +114,44 @@ if __name__ == "__main__":
 
     url = "https://portal.f5silverline.com/api/v1/"
     tenant_lst = []
-    tenant_lst.append({"name": "Fiserv-Development (firstdata7)", "token": str(sys.argv[1])})
+    # tenant_lst.append({"name": "Fiserv-Development (firstdata7)", "token": str(sys.argv[1])})
+    # tenant_lst.append({"name": "Fiserv-Development (firstdata7)", "token": os.environ.get("RD_OPTION_TOKEN")})
+    tenant_lst.append(
+        {"name": "Fiserv-Development (firstdata7)", "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[0]}
+    )
+    tenant_lst.append(
+        {"name": "Fiserv-Clover (firstdatac6)", "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[1]}
+    )
+    tenant_lst.append(
+        {"name": "Fiserv-OFS (firstdatac5)", "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[2]}
+    )
+    tenant_lst.append(
+        {"name": "First Data Corporation (firstdata)", "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[3]}
+    )
+    tenant_lst.append(
+        {
+            "name": "First Data Corporation Child Account B (firstdatac2)",
+            "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[4],
+        }
+    )
+    tenant_lst.append(
+        {
+            "name": "First Data Corporation Child Account A (firstdatac1)",
+            "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[5],
+        }
+    )
+    tenant_lst.append(
+        {
+            "name": "First Data Corporation Child Account C (firstdatac3)",
+            "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[6],
+        }
+    )
+    tenant_lst.append(
+        {
+            "name": "First Data Corporation Child Account D (firstdatac4)",
+            "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[7],
+        }
+    )
     # token = str(sys.argv[1])
 
     # Opening JSON file
@@ -124,6 +164,9 @@ if __name__ == "__main__":
     # Iterating through the json list to Add new Address or to update comments
     for tenant in tenant_lst:
         current_data = view_aciton(url, tenant["token"])
+        print(tenant["name"])
+        print(current_data)
+        """
         for idata in intend_data["deny_list"]:
             add1 = True
             for cdata in current_data:
@@ -165,9 +208,11 @@ if __name__ == "__main__":
         "body": msg_data,
     }
     send_email(**d)
-    SPLUNK_VAR["token"] = f"Splunk {str(sys.argv[2])}"
+    # SPLUNK_VAR["token"] = f"Splunk {str(sys.argv[2])}"
+    SPLUNK_VAR["token"] = f"Splunk {os.environ.get('RD_OPTION_SPLUNKTOKEN')}"
     SPLUNK_VAR["data"] = msg_data
     splunk_log_event(**SPLUNK_VAR)
 
     # Closing file
     f.close()
+    """
