@@ -116,36 +116,12 @@ if __name__ == "__main__":
     tenant_lst.append(
         {"name": "Fiserv-Clover (firstdatac6)", "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[1]}
     )
-    # tenant_lst.append(
-    #     {"name": "Fiserv-OFS (firstdatac5)", "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[2]}
-    # )
+    tenant_lst.append(
+        {"name": "Fiserv-OFS (firstdatac5)", "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[2]}
+    )
     tenant_lst.append(
         {"name": "First Data Corporation (firstdata)", "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[3]}
     )
-    # tenant_lst.append(
-    #     {
-    #         "name": "First Data Corporation Child Account B (firstdatac2)",
-    #         "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[4],
-    #     }
-    # )
-    # tenant_lst.append(
-    #     {
-    #         "name": "First Data Corporation Child Account A (firstdatac1)",
-    #         "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[5],
-    #     }
-    # )
-    # tenant_lst.append(
-    #     {
-    #         "name": "First Data Corporation Child Account C (firstdatac3)",
-    #         "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[6],
-    #     }
-    # )
-    # tenant_lst.append(
-    #     {
-    #         "name": "First Data Corporation Child Account D (firstdatac4)",
-    #         "token": os.environ.get("RD_OPTION_TOKEN_ALL").split(",")[7],
-    #     }
-    # )
 
     # Opening JSON file
     f = open("data/deny_list.yml")
